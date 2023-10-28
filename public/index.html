@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>  
+<meta charset="utf-8"> 
+<meta name="viewport" 
+content="width=device-width">  
+<title>Tuto WebSocket avec Socket.io et NodeJS par WeLoveDevs.com</title>
+</head>
+<body>  
+    <H1>Hello</H1>  
+    <input id="messageClient">
+
+    <ul id="list">    
+        <li>Premier élément2</li>  
+    </ul>  <!-- CREATION SOCKET -->  
+    <script src="/socket.io/socket.io.js"></script>  
+    <script>    
+ 
+    var socket = io();  
+
+    socket.on('news', function(msg)
+    {console.log(msg);  
+    var newLi= document.createElement('li');
+    newLi.innerHTML=msg;
+    document.getElementById('list').appendChild(newLi);
+    socket.emit("msg","c'est parti initial");
+    
+    
+    });
+    var input=document.getElementById("messageClient");
+    input.oninput= function(a) {
+ 
+    socket.emit("lettre",a.data);
+  
+    }
+    </script>  <!-- FIN CODE SOCKET -->
+
+</body></html>
