@@ -1,6 +1,8 @@
 var express = require('express');
 var app = express();
 
+const PORT = 3000 ; 
+
 /* Version de github
    Création d'une route. Chaque route correspondra à un URL différent. 
    Ici cela correspond à http://mon_adresse/
@@ -16,6 +18,6 @@ app.get('/toto', function(req,res) {
 });
 
 // On écoute le port 3000
-app.listen(8082, function () {
-  console.log('Example app listening on port 8082!');
+app.listen(PORT, function () {
+  console.log('Example application listening on port ${PORT} !');
 });
