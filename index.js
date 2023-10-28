@@ -1,7 +1,8 @@
 var express = require('express');
 var app = express();
 
-/* Création d'une route. Chaque route correspondra à un URL différent. 
+/* Version de github
+   Création d'une route. Chaque route correspondra à un URL différent. 
    Ici cela correspond à http://mon_adresse/
    Si nous avions  app.get('/name', function (req, res) {
    La route serait http://mon_adresse/name 
