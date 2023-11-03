@@ -1,20 +1,35 @@
 {
+<<<<<<< Updated upstream
   "dependencies": {
     "express": "^4.18.2",
     "node": "^21.1.0",
     "socket.io": "^4.7.2"
   },
+=======
+>>>>>>> Stashed changes
   "name": "sacado-node",
   "version": "1.0.0",
   "description": "Plateforme SacAdo version node",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "watch": "nodemon index.js",
+    "client": "cd client && npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Demaria-Ceroi",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "node": "^21.1.0"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/stephCeroi/sacado-node"
   },
-  "author": "Demaria-Ceroi",
-  "license": "ISC"
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
 }
