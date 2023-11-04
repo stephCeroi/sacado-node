@@ -25,12 +25,7 @@ app.get(/^\/(|demo)$/,  async(req, res)  =>  {
   const pageHTML = await genererModele(nomPage)
   res.send(pageHTML)
 });
- //Fonction qui renvoie les HTML des routes
- app.get('/group/'+/^\/(|demo)$/,  async(req, res)  =>  {
-  const nomPage = NOM_PAGES[req.params[0]] || 'index'
-  const pageHTML = await genererModele(nomPage)
-  res.send(pageHTML)
-});
+ 
 
 // Ecoute tous les requetes du répertoire /style/xxx et associ les répertoires donnés
 const STATIC_IMG = 'd:/uwamp/www/sacado-node/static/img'
