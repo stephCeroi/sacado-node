@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+
+    
+
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico"/>
+    <!-- Entete spécifique aux pages  -->
+         {{TITLE}}
+
+
+
+
+    <!-- Bootstrap CSS File -->
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet" type="text/css" >
+    <!-- Local CSS File -->
+    <link href="styles/accueil_style.css" rel="stylesheet" type="text/css">
+    <link href="styles/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="styles/select2.css" rel="stylesheet" type="text/css"/>
+
+</head>
+
+<body>
+<header id="header">
+    <div class="container">
+        <div class="logo float-left">
+            <a class="navbar-brand sacado" href="#intro"><img src="img/sacadoLogo.png"/> SACADO<img src="img/approche_gar.png" /></a>
+            <a href="#" data-toggle='modal' data-target='#sacadopopup' class="btn btn-sacado_index">  Version Établissement </a>
+        </div>
+        <nav class="main-nav float-right d-none d-lg-block">
+            <ul> 
+                <li><a href="#" data-toggle='modal' data-target='#connexion' class="btn btn-intro_sacado btn-connex">Connexion</a></li>
+                <li><a href="#" data-toggle='modal' data-target='#inscription' class="btn btn-intro_sacado">S'inscrire</a></li>
+                <li><a href="#footer" class="btn btn-intro_sacado">Contact</a></li>
+            </ul>
+        </nav><!-- .main-nav -->
+    </div>
+</header>
+
+
+    <!-- Contenu spécifique aux pages  -->
+    {{BODY}}
+
+  <!--==========================
+    Footer
+  ======================footer======-->
+<footer id="footer" class="section-bg wow fadeIn">
+    <div class="footer-top">
+      <div class="container">
+
+        <div class="row">
+
+          <div class="col-xs-12 col-md-6">
+
+            <div class="row">
+
+                <div  class="col-xs-12 col-md-12">
+
+                  <div class="footer-info">
+                    <h3>SACADO</h3>
+                    <p>SACADO est un créateur de parcours d'apprentissage construits à partir d'exercices à variables aléatoires. <br>Les élèves travaillent leurs savoir faire scientifiques en totale autonomie ou sous la supervision de leur enseignant. <br>Les enseignants suivent les acquisitions de leurs élèves. Les résultats s'exportent au format CSV, selon condition.<br>Les parents peuvent accéder aux résultats de leurs enfants.  </p>
+                  </div>
+
+                    <h4> <a href="{% url 'rgpd' %}">RGPD</a> - <a href="{% url 'cgv' %}" >CGV</a> - <a href="{% url 'mentions' %}" >Mentions Légales</a> </h4>
+                    
+                    <h4>L'Équipe SACADO</h4>
+
+                    <p>
+                    <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
+                    </p>
+
+                </div>
+            </div>
+
+          </div>
+
+          <div class="col-xs-12 col-md-6">
+
+            <div class="form"> 
+
+              <h4>Envoyez un message</h4>
+              <p>Vous souhaitez obtenir des infos, utiliser SACADO dans votre établissement, laisser un message. Utiliser cet espace.</p>
+              <form action="{% url 'send_message' %}" method="post" >
+                  {% csrf_token %}
+                <div class="form-group">
+                  <input type="text" name="name" class="form-control" id="name" placeholder="Nom" data-rule="minlen:4" data-msg="Please enter at least 4 chars" required />
+                </div>
+                <div class="form-group">
+                  <input type="email" class="form-control" name="email" id="email" placeholder="Email" data-rule="email" data-msg="Please enter a valid email" required />
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control" name="subject" id="subject" placeholder="Objet" data-rule="minlen:4" data-msg="Au moins 8 caractères" required />
+                </div>
+                <div class="form-group">
+                  <textarea class="form-control" name="message" rows="5" required data-msg="Ecrire votre message" placeholder="Message"></textarea>
+                </div>
+
+                <div class="form-group">
+                  <img src="img/som_token.png" />
+                  <input type="text" name="token" class="form-control" id="token" placeholder="Ecrire le résultat de la somme"  />
+                </div>
+
+                <div class="text-center"><button type="submit" name="info_academy" value="no" class="btn btn-sacado">Envoyer</button></div>
+              </form>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-xs-4" align="center">
+                <a href="https://www.geogebra.org/?lang=fr"  style="color:white;font-size: 30px" target="_blank"><img src="img/ggb.png"> GEOGEBRA</a>
+            </div>
+            <div class="col-xs-4" align="center">
+                <a href="https://www.lws.fr/"  style="color:white" target="_blank"><img src="img/lws_gris.png"></a>
+            </div>
+            <div class="col-xs-4" align="center">
+                <a href="{% url 'tweeters_public' %}" style="margin-right:40px"><img src="img/twitter.png" ></a>
+            </div>
+
+        </div>
+
+      </div>
+    </div>
+  </footer><!-- #footer -->
+ 
+
+
+</body>
+</html>
+
+ 

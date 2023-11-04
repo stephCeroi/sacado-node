@@ -5,7 +5,7 @@
 require('dotenv').config();
 
 // déclaration de constante
-const PORT = process.env.PORT || 3000  
+const PORT = process.env.PORT || 4000  
 
 // importe le paquet Express
 var express = require('express');
@@ -13,27 +13,27 @@ var app = express();
 app.use(express.json())
 
 
-/*
-var urls = require('./group');
-app.use('/group', urls);
-*/
+const genererModele = require('./views/page-get.js')
 
-const genererPageAccueil = require('./views/index-get.js')
-
-
-// Liste des routes  
-app.get('/',  async (req, res)  =>  {
-  const indexHTML = await genererPageAccueil()
-  res.send(indexHTML)
+// Liste des routes 
+const NOM_PAGES = {
+    'demo' : 'demo',  
+} 
+ // Fonction qui renvoie les HTML des routes
+app.get(/^\/(|demo)$/,  async(req, res)  =>  {
+  const nomPage = NOM_PAGES[req.params[0]] || 'index'
+  const pageHTML = await genererModele(nomPage)
+  res.send(pageHTML)
 });
+
 
 // Ecoute tous les requetes du répertoire /style/xxx et associ les répertoires donnés
 const STATIC_IMG = 'd:/uwamp/www/sacado-node/static/img'
-const STATIC_CSS = 'd:/uwamp/www/sacado-node/static/css'
+const STATIC_STYLES = 'd:/uwamp/www/sacado-node/static/styles'
 // Retourne les images statiques
-app.use('/static/img',express.static(STATIC_IMG))
+app.use('/img',express.static(STATIC_IMG))
 // Retourne les styles
-app.use('/static/styles',express.static(STATIC_CSS)) 
+app.use('/styles',express.static(STATIC_STYLES)) 
 
 // On écoute le port 3000
 app.listen(PORT,  () => {

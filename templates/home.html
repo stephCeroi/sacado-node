@@ -1,0 +1,647 @@
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+{% load static %}
+{% load item_tags %}
+
+
+
+{% block body %}
+
+
+
+
+
+
+
+{% if messages %}
+<ul class="messages" id="container_messages">
+    {% for message in messages %}
+    <div class="container alert alert-info" role="alert" style="top:100px">
+        {{ message }}
+    </div>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% if cookie_rgpd_accepted %}
+<div id="display_rgpd" >
+    <form  method="POST" enctype='multipart/form-data'> {% csrf_token  %}
+        Sacado veille à protéger vos données personnelles. Ce site utilise des cookies pour améliorer votre expérience. Sacado ne recueille aucune donnée autre que les données nécessaires. 
+        <hr>
+        <a href="#" id="accept_rgpd" class="btn btn-default"> Oui, j'accepte les cookies.</a>
+        <a href="#" id="no_accept_rgpd" class="btn btn-default"> Non, je refuse les cookies.</a>
+    </form>
+</div>
+{% endif %}
+
+{% if form.errors %}
+<div class="container alert alert-danger" role="alert" style="top:100px">
+    <i class="fa fa-warning"></i> Votre connexion a échoué. Vérifier votre identifiant et/ou votre mot de passe.
+</div>
+{% endif %}
+<!--==========================
+Intro Section -
+============================-->
+<section id="intro" class="clearfix">
+    <div class="container h-100">
+
+
+        <div class="row justify-content-center align-self-center intro-info order-md-first order-last" style="padding-bottom:20px">
+ 
+
+            <div class="col-xs-12">
+
+                <div style="background-color: black; padding : 20px; color: white; width:100%; ">
+
+
+                 Les enseignants sont des phares contre l'obscurantisme. <br/>SACADO s'associe à la douleur de la famille, des amis et des collègues de Dominique Bernard.
+
+                </div>
+            </div>
+
+
+            <div class="col-xs-12 col-md-12 col-lg-5">
+ 
+                <div class="title marginbottom50" style="clear: both; margin-bottom: 40px;">
+                    <span class="exo">{{ nb_parcours }}</span> parcours <span class="helper_tip"><span style="position: relative; line-height: 0;top:-20px;color: #00B999"><i class="fa fa-question-circle"></i></span> 
+                          <div class="helper_tip_text" >créés à partir de plus {{ nb_exercise }} exercices interactifs, corrigés à variables dynamiques aléatoires<br/>+ des cours<br/>+ des exercices en LaTeX<br/>+ des quizz<br/>+ des documents<br/>+ des questions flash<br/>Le tout paramétrable et personnalisable.</div>
+                    </span> <span style="color: #0093CA">interactif{{ nb_parcours|pluralize }}</span>
+
+ 
+                    de {% for s in subjects %}{{ s.shortname }}{% if not forloop.last %}, {% endif %}{% endfor %}, <span style="color: #0093CA">auto-corrigé{{  nb_parcours|pluralize }}</span> de la Maternelle à la Terminale en <span style="color: #00B999">apprentissage  adaptatif</span>.
+
+                    <br/>
+                    <div class="index_step" style="background-color: #0960B5">Nommer vos groupes</div> 
+                    <div class="index_step"  style="background-color: #00B999">Choisir <br/>vos parcours</div>  
+                    <div class="index_step"  style="background-color: #0093CA;padding-top:15px;">SACADO est prêt</div>
+                </div>
+                <div style="margin: 0px 0px 30px 0px; clear:both">
+                    <i class="fa fa-apple"></i>
+                    <a href="https://java.com/fr/download/help/mac_install.xml"
+                       target="_blank" >
+                        <small>Pour safari, installer Java si nécessaire.</small>
+                    </a>
+                </div>
+            </div>
+
+
+
+
+            <div class="col-xs-12 col-md-12 col-lg-7 no_mobile_exercises" >
+                <small style="margin-left:150px">Cliquez sur l'écran pour tester l'exercice en cours.</small>
+                <div style="position: relative;text-align:center">
+                    <a href="{% url 'show_exercise'   exercise.id     %}" target="_blank">
+                        {% if exercise.id|divisibleby:"3" %}
+                        <img src="{{ exercise.supportfile.imagefile.url }}" width="400" class="image_mains_ip_base"/>
+                        <img src="{% static 'img/mains_ip.png' %}" height="490" width="610" style=" z-index: 999"/>
+                        {% elif exercise.id|divisibleby:"4" %}
+                        <img src="{{ exercise.supportfile.imagefile.url }}" width="400" class="image_index_base" />
+                        <img src="{% static 'img/ordinateur.png' %}" height="490" style=" z-index: 999"/>
+                        {% else %}
+                        <img src="{{ exercise.supportfile.imagefile.url }}" width="400" class="image_index_base" />
+                        <img src="{% static 'img/ordi_portable.png' %}" height="490" style="  z-index: 999"/>
+                        {% endif %}
+
+                    </a>
+                </div>
+            </div> 
+        </div>
+
+        <div class="row" style="margin-bottom: 40px">
+            <div class="col-xs-12 col-md-12 col-lg-4" >
+                <div class="row counters">
+                    <div class="col-lg-6 col-6 text-center">
+                        <span data-toggle="counter-up">{{ nb_teacher }}</span>
+                        <p>Enseignants</p>
+                    </div>
+                    <div class="col-lg-6 col-6 text-center">
+                        <span data-toggle="counter-up">{{ nb_student }}</span>
+                        <p>Elèves</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-12 col-lg-8 no_mobile_exercises">
+                <small style="margin-left:150px">Les établissements font confiance à <span class="">SACADO</span></small>
+                {% include 'schools_slider_min.html'  %}
+            </div>
+        </div>
+    </div>
+</section><!-- #intro -->
+
+ 
+  <main id="main">
+    <!--==========================
+      Exercises exercises
+    ============================-->
+    <section id="exercises" class="section-bg" style="padding-top:50px">
+      <div class="container">
+        <header class="section-header">
+          <h3>Exercices</h3>
+          <p style="padding-bottom:30px">Classés par niveaux, par thèmes, par savoir-faire. </p>
+        </header>
+ 
+        <form method="POST" enctype='multipart/form-data'>
+        <div class="row" align="center">
+
+            {% csrf_token %}
+            {% for subject in subjects %}
+                <div class="col-lg-3 col-md-4 col-xs-6">
+                    <div class="subject_div {% if forloop.first %}active_subject_div{% endif %}" data-subject_id="{{ subject.id }}" >
+                        <div class="title_subject">{{ subject.name}}</div>
+                        <div class="level_subject">{{ subject.level_min_max}}</div>
+
+                        <div class="nb_exo_div">{{ subject.nb_exercises}} exercices</div>
+                    </div>
+                </div> 
+            {% endfor %}
+        </div>
+        </form>
+
+        <div style="height: 30px"></div>
+        <div class="row" id="sacado_subject">
+            {% for level in levels %}
+                {% with level.exotot as nb_exo %}
+                <div class="col-md-6 col-lg-3 wow bounceInUp" data-wow-duration="1.4s">
+                  	<a href="{% url 'exercises_level_subject'  level.id 1 %}" style="color:#FFF;">
+          	            <div class="imagebox">
+            	              <div class="icon {{ level.cycle }}" > {{ level.name }}<br>{{ nb_exo}} exercice{{ nb_exo|pluralize }}</div>
+                            <img src="../../static/img/levels/level{{ level.id }}_1.png" width="250" />
+            	              <p class="description"></p>
+          	            </div>
+        	          </a>
+                </div>
+                {% endwith %}
+            {% endfor %}
+        </div>
+        <div style="height: 100px"></div>
+
+      </div>
+    </section><!-- #services -->
+
+
+
+ 
+
+
+    <!--==========================
+      About  Section
+    ============================-->
+    <section id="about" class="wow fadeIn">
+      <div class="container">
+        <div class="row">
+            <div class="col-lg-5 col-md-5">
+                <h3>Progressivité et Programmes </h3>
+                <li class="sanspuce"><a href="https://eduscol.education.fr/document/20062/download" target="_blank"> Maternelle - Programme </a></li>
+
+
+                <li class="sanspuce"><a href="https://cache.media.eduscol.education.fr/file/Attendus_et_reperes_C2-3-4/73/2/02-Maths-CP-attendus-eduscol_1114732.pdf" target="_blank"> CP - Repère de progressivité</a></li>
+
+                <li class="sanspuce"><a href="https://cache.media.eduscol.education.fr/file/Attendus_et_reperes_C2-3-4/73/4/04-Maths-CE1-attendus-eduscol_1114734.pdf" target="_blank"> CE1 - Repère de progressivité</a></li>
+
+                <li class="sanspuce"><a href="https://cache.media.eduscol.education.fr/file/Attendus_et_reperes_C2-3-4/73/6/06-Maths-CE2-attendus-eduscol_1114736.pdf" target="_blank"> CE2 - Repère de progressivité</a></li>
+
+
+                <li class="sanspuce"><a href="https://cache.media.eduscol.education.fr/file/Attendus_et_reperes_C2-3-4/73/8/08-Maths-CM1-attendus-eduscol_1114738.pdf" target="_blank">CM1 - Repère de progressivité</a></li>
+
+                <li class="sanspuce"><a href="https://cache.media.eduscol.education.fr/file/Attendus_et_reperes_C2-3-4/74/0/10-Maths-CM2-attendus-eduscol_1114740.pdf" target="_blank">CM2 - Repère de progressivité</a></li>
+
+                <li class="sanspuce"><a href="https://cache.media.eduscol.education.fr/file/Attendus_et_reperes_C2-3-4/74/2/12-Maths-6e-attendus-eduscol_1114742.pdf" target="_blank">6<sup>ème</sup> - Repère de progressivité</a> </li>
+
+
+                <li class="sanspuce"><a href="https://cache.media.eduscol.education.fr/file/Attendus_et_reperes_C2-3-4/74/4/14-Maths-5e-attendus-eduscol_1114744.pdf" target="_blank">5<sup>ème</sup> - Repère de progressivité</a> </li>
+
+                <li class="sanspuce"><a href="https://cache.media.eduscol.education.fr/file/Attendus_et_reperes_C2-3-4/74/6/16-Maths-4e-attendus-eduscol_1114746.pdf" target="_blank">4<sup>ème</sup> - Repère de progressivité </a></li>
+
+                <li class="sanspuce"><a href="https://cache.media.eduscol.education.fr/file/Attendus_et_reperes_C2-3-4/74/8/18-Maths-3e-attendus-eduscol_1114748.pdf" target="_blank">3<sup>ème</sup> - Repère de progressivité </a></li>
+
+                <li class="sanspuce"><a href="https://cache.media.education.gouv.fr/file/SP1-MEN-22-1-2019/95/7/spe631_annexe_1062957.pdf" target="_blank">2<sup>nde</sup> - Programme </a></li>
+
+                <li class="sanspuce"><a href="https://cache.media.education.gouv.fr/file/SP1-MEN-22-1-2019/16/8/spe632_annexe_1063168.pdf" target="_blank">1<sup>ère</sup> - Programme </a></li>
+
+                <li class="sanspuce"><a href="https://cache.media.education.gouv.fr/file/SPE8_MENJ_25_7_2019/90/7/spe246_annexe_1158907.pdf" target="_blank">T<sup>ale</sup> - Programme </a> </li>
+
+
+                <img src="{% static 'img/logo-france.jpg' %}" width="150px" class="img-fluid"/>
+
+
+            </div>
+
+            <div class="col-lg-7 col-md-7">
+                <header class="section-header">
+                    <h3>A propos de l'asso <span class="sacado">SACADO</span></h3>
+                </header>
+                <div class="about-content">
+
+                    <div class="index_label_icone" >
+                      <a href="#"  data-toggle='modal' data-target='#actu'  >
+                        <img src="{% static 'img/index_actu.png' %}" class="index_icone"/>L'actu  
+                      </a>
+                    </div>
+
+
+
+                    <div class="index_label_icone" >
+                      <a href="#"  data-toggle='modal' data-target='#historique'  ><img src="{% static 'img/index_historique.png' %}" class="index_icone"/>L'historique  
+                      </a>
+                    </div>
+                    
+                    <div class="index_label_icone" >
+                      <a href="#"  data-toggle='modal' data-target='#statut'  >
+                        <img src="{% static 'img/index_status.png' %}" class="index_icone"/>Les statuts   
+                      </a>
+                    </div>
+
+                    {% comment %}
+                    <div class="index_label_icone" >
+                      <a href="#"  data-toggle='modal' data-target='#comptes'  ><img src="{% static 'img/index_compte.png' %}" class="index_icone"/> Les comptes  
+                      </a>
+                    </div>
+
+                    <div class="index_label_icone" >
+                      <a href="#"  data-toggle='modal' data-target='#membres'  >
+                        <img src="{% static 'img/index_membres.png' %}" class="index_icone"/>Les membres  
+                      </a>
+                    </div>
+                    {% endcomment %}
+
+                    <div class="index_label_icone" >
+                      <a href="#"  data-toggle='modal' data-target='#whos'  ><img src="{% static 'img/index_whos.png' %}" class="index_icone"/> Côté presse
+                      </a>
+                    </div>
+
+                     <div class="index_label_icone" >
+                      <a href="#"  data-toggle='modal' data-target='#connecteurs'  ><img src="{% static 'img/index_gar.png' %}" class="index_icone"/> Connecteur 
+                      </a>
+                    </div>
+
+
+                     <div class="index_label_icone" >
+                      <a href="#"  data-toggle='modal' data-target='#helpus'  ><img src="{% static 'img/index_helpus.png' %}" class="index_icone"/> Tarifs  
+                      </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+      </div>
+    </section>
+
+
+
+  <!--==========================
+    Footer
+  ======================footer======-->
+  <footer id="footer" class="section-bg wow fadeIn">
+    <div class="footer-top">
+      <div class="container">
+
+        <div class="row">
+
+          <div class="col-xs-12 col-md-6">
+
+            <div class="row">
+
+                <div  class="col-xs-12 col-md-12">
+
+                  <div class="footer-info">
+                    <h3>SACADO</h3>
+                    <p>SACADO est un créateur de parcours d'apprentissage construits à partir d'exercices à variables aléatoires. <br>Les élèves travaillent leurs savoir faire scientifiques en totale autonomie ou sous la supervision de leur enseignant. <br>Les enseignants suivent les acquisitions de leurs élèves. Les résultats s'exportent au format CSV, selon condition.<br>Les parents peuvent accéder aux résultats de leurs enfants.  </p>
+                  </div>
+
+                    <h4> <a href="{% url 'rgpd' %}">RGPD</a> - <a href="{% url 'cgv' %}" >CGV</a> - <a href="{% url 'mentions' %}" >Mentions Légales</a> </h4>
+                    
+                    <h4>L'Équipe SACADO</h4>
+
+                    <p>
+                    <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
+                    </p>
+
+                </div>
+            </div>
+
+          </div>
+
+          <div class="col-xs-12 col-md-6">
+
+            <div class="form"> 
+
+              <h4>Envoyez un message</h4>
+              <p>Vous souhaitez obtenir des infos, utiliser SACADO dans votre établissement, laisser un message. Utiliser cet espace.</p>
+              <form action="{% url 'send_message' %}" method="post" >
+                  {% csrf_token %}
+                <div class="form-group">
+                  <input type="text" name="name" class="form-control" id="name" placeholder="Nom" data-rule="minlen:4" data-msg="Please enter at least 4 chars" required />
+                </div>
+                <div class="form-group">
+                  <input type="email" class="form-control" name="email" id="email" placeholder="Email" data-rule="email" data-msg="Please enter a valid email" required />
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control" name="subject" id="subject" placeholder="Objet" data-rule="minlen:4" data-msg="Au moins 8 caractères" required />
+                </div>
+                <div class="form-group">
+                  <textarea class="form-control" name="message" rows="5" required data-msg="Ecrire votre message" placeholder="Message"></textarea>
+                </div>
+
+                <div class="form-group">
+                  <img src="{% static 'img/som_token.png' %}" />
+                  <input type="text" name="token" class="form-control" id="token" placeholder="Ecrire le résultat de la somme"  />
+                </div>
+
+                <div class="text-center"><button type="submit" name="info_academy" value="no" class="btn btn-sacado">Envoyer</button></div>
+              </form>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-xs-4" align="center">
+                <a href="https://www.geogebra.org/?lang=fr"  style="color:white;font-size: 30px" target="_blank"><img src="{% static 'img/ggb.png' %}"> GEOGEBRA</a>
+            </div>
+            <div class="col-xs-4" align="center">
+                <a href="https://www.lws.fr/"  style="color:white" target="_blank"><img src="{% static 'img/lws_gris.png' %}"></a>
+            </div>
+            <div class="col-xs-4" align="center">
+                <a href="{% url 'tweeters_public' %}" style="margin-right:40px"><img src="{% static 'img/twitter.png' %}" ></a>
+            </div>
+
+        </div>
+
+      </div>
+    </div>
+  </footer><!-- #footer -->
+
+<a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+</main>
+    
+
+<div class="modal fade" id="actu" tabindex="-1" role="dialog" aria-labelledby="actu">
+    <div class="modal-dialog modal-maxsize" role="document">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <h2  class='sacado'  >L'actu <span class="sacado">SACADO</span></h2>              
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> 
+
+            </div>
+            <div class="modal-body">
+                {% include 'sacado_actu.html' %}
+            </div>
+        </div>
+    </div> 
+</div>
+
+
+<div class="modal fade" id="statut" tabindex="-1" role="dialog" aria-labelledby="statut">
+    <div class="modal-dialog modal-maxsize" role="document">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <h2  class='sacado'  >Les statuts <span class="sacado">SACADO</span></h2>              
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> 
+
+            </div>
+            <div class="modal-body">
+                {% include 'sacado_status.html' %}
+            </div>
+        </div>
+    </div> 
+</div>
+
+{% comment %}
+<div class="modal fade" id="membres" tabindex="-1" role="dialog" aria-labelledby="membres">
+    <div class="modal-dialog modal-maxsize" role="document">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <h2  class='sacado'  >Les membres <span class="sacado">SACADO</span></h2>              
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> 
+
+            </div>
+            <div class="modal-body">
+                {% include 'sacado_membres.html' %}
+            </div>
+        </div>
+    </div> 
+</div>
+{% endcomment %}
+
+<div class="modal fade" id="whos" tabindex="-1" role="dialog" aria-labelledby="whos">
+    <div class="modal-dialog modal-maxsize" role="document">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <h2  class='sacado'  >Le dossier de presse <span class="sacado">SACADO</span></h2>                
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> 
+
+            </div>
+            <div class="modal-body">
+                 {% include 'sacado_whos.html' %}
+            </div>
+        </div>
+    </div> 
+</div>
+<div class="modal fade" id="historique" tabindex="-1" role="dialog" aria-labelledby="historique">
+    <div class="modal-dialog modal-maxsize" role="document">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <h2  class='sacado'  >L'historique de <span class="sacado">SACADO</span></h2>              
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> 
+
+            </div>
+            <div class="modal-body">
+                 {% include 'sacado_historique.html' %}
+            </div>
+        </div>
+    </div> 
+</div>
+{% comment %}
+<div class="modal fade" id="comptes" tabindex="-1" role="dialog" aria-labelledby="comptes">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <h2  class='sacado'  >Les comptes de <span class="sacado">SACADO</span></h2>              
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> 
+
+            </div>
+            <div class="modal-body" >
+                 {% include 'sacado_comptes.html' %}
+            </div>
+        </div>
+    </div> 
+</div>
+{% endcomment %}
+<div class="modal fade" id="connecteurs" tabindex="-1" role="dialog" aria-labelledby="connecteurs">
+    <div class="modal-dialog modal-maxsize" role="document">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <h2  class='sacado'  >Le connecteur ENT/GAR</h2>              
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> 
+
+            </div>
+            <div class="modal-body">
+                 {% include 'sacado_gar.html' %}
+            </div>
+        </div>
+    </div> 
+</div>
+<div class="modal fade" id="helpus" tabindex="-1" role="dialog" aria-labelledby="helpus">
+    <div class="modal-dialog modal-maxsize" role="document" >
+        <div class="modal-content" >
+            <div class="modal-header">
+                <h2  class='sacado'  >Aider <span class="sacado">SACADO</span></h2>              
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> 
+
+            </div>
+            <div class="modal-body">
+                  {% include 'sacado_help_us.html' %}
+            </div>
+        </div>
+    </div> 
+</div>
+ 
+<div class="modal fade" id="rt_modal" tabindex="-1" role="dialog" aria-labelledby="rt_modal">
+    <div class="modal-dialog modal-lg" role="document"  style="width:750px">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <h2  class='sacado'  >Temps réel</h2>              
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> 
+
+            </div>
+            <div class="modal-body">
+                <p>Sacado intègre une interface de temps réel, pour la version Etablissement.</p>
+                <p>Lorsque vous proposez un parcours à vos élèves, vous avez un aperçu sur les exercices qui sont en train d'être effectués, avec les bonnes réponses et les mauvaises réponses en temps réel. Sur la vue de temps réel, les exercices réussis apparaissent en vert et en rouge les exercices ratés de la série en cours. 
+                </p>
+                <p>Un chat privé, pour discuter avec un élève en particulier, ou un chat général pour envoyer un message à toute la classe est actif pour un suivi personnalisé durant les séances de travail.</p>
+
+                <img src="{% static 'img/rt_template.jpg' %}" width="600px" />
+            </div>
+        </div>
+    </div> 
+</div>
+
+
+
+<div class="modal fade" id="python_modal" tabindex="-1" role="dialog" aria-labelledby="python_modal">
+    <div class="modal-dialog modal-lg" role="document"  style="width:750px">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <h2  class='sacado'  >Interface Python</h2>              
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> 
+
+            </div>
+              <div class="modal-body">
+
+                  <p>Sacado intègre une interface Python. </p>
+                  <p>Pour une utilisation en classe, sacado propose de nombreux outils vidéo-projetables parmi lesquels Sacado dispose d'une interface Python avec une partie pour écrire le code et la console. </p>
+                  <img src="{% static 'img/py_template.jpg' %}" width="700px" style="margin: 20px" />
+                  <p>Lors de la création d'exercices personnalisés en version Etablissement, Sacado donnne accès à cette interface Python. Lors d'évaluation ou d'exercices, les productions élèves sont récupérées pour une correction en ligne avec une interface ergonomique et efficace.</p>
+                  <img src="{% static 'img/py_template_cor.jpg' %}" width="700px" style="margin: 20px"  />
+              </div> 
+        </div>
+    </div> 
+</div>
+
+
+<div class="modal fade" id="flashpack_modal" tabindex="-1" role="dialog" aria-labelledby="flashpack_modal">
+    <div class="modal-dialog modal-lg" role="document"  style="width:750px">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <h2  class='sacado'  >Flashpack et flashcards</h2>              
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> 
+
+            </div>
+              <div class="modal-body">
+
+                  <p>Un flashpack est un ensemble de flashcards (ou cartes mémoire). </p>
+                  <p>Depuis plusieurs décennies, les neuroscientifiques, pédagogues, psychologues, informaticiens cherchent à déterminer une méthode efficace pour apprendre. Stanislas Dehaene bâtit une thèse sur ses <a href="http://parisinnovationreview.com/article/les-quatre-piliers-de-lapprentissage-stanislas-dehaene" target="_blank">4 piliers de l'apprentissage</a> :
+                  <ol>
+                      <li>L'attention</li>
+                      <li>L'engagement actif</li>
+                      <li>Le retour d’information</li>
+                      <li>La consolidation</li>
+                  </ol> 
+                  </p>
+                  <p>De son coté, <a href="https://supermemo.guru/wiki/Piotr_Wozniak" target="_blank">Piotr Wozniak</a> code dès 1985 un algorithme d'apprentissage par répétitions espacées, le 
+                    <a href="https://www.supermemo.com/en/articles/history" target="_blank">SUPERMEMO</a>. Aujourd'hui, cette base algorithmique est largement utilisée, amendée, recalculée et de nombreuses applications utilisent ce procédé.</p>
+                  <p>SACADO se lance dans les répétitions espacées selon un algorithme simplifié de SUPERMEMO. Chaque enseignant peut alors choisir l'algorithme sur une période donnée. Il crée ses flashpacks à partir de flashcards existantes ou crée ses propres flashcards ou demandent à ses élèves de construire leurs cartes mémoires.  
+                  <ol>Deux modes d'utilisation des flashpacks : 
+                      <li>Répétitions espacées : SACADO prévient l'élève des dates de répétitions dès que l'élève se connecte à son espace.</li>
+                      <li>Autonomie :  L'élève s'entraine à souhait sur son flashpack et à date échéance, son score est enregistré.</li>
+                  </ol> 
+                  </p>
+                  <p>
+                      Convaincue de l'étude des neurosciences, l'équipe SACADO place les flashpacks dans son application pour permettre à chaque élève de s'engager dans son apprentissage encore un peu plus efficacement.
+                  </p>
+                  <img src="{% static 'img/flashpack_template.jpg' %}" width="700px" />
+              </div> 
+        </div>
+    </div> 
+</div>
+
+
+
+<div class="modal fade" id="bibliotex_modal" tabindex="-1" role="dialog" aria-labelledby="bibliotex_modal">
+    <div class="modal-dialog modal-lg" role="document"  style="width:750px">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <h2  class='sacado'  >BiblioTex</h2>              
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> 
+            </div>
+            <div class="modal-body">
+                <p>Une biblioTex est un ensemble d'exercices en <img src="{% static 'img/latex_project.png' %}" height="15px" style="vertical-align: bottom"/>. </p>
+                <p>Vous choisissez vos exerices toujours avec le même principe cher à SACADO. Aucun exercice n'est construit au hasard, chaque exercice est adossé à un ou plusieurs savoir faire et compétences. Ainsi, l'enseignant et ses élèves savent exactement l'utilité de l'exercice et les capacités travaillées. </p>
+                <p>Il est possible d'exporter le code source directement. Si vous connaissez <img src="{% static 'img/latex_project.png' %}" height="15px" style="vertical-align: bottom"/>, vous pouvez modifier le contenu de l'exercice avec votre éditeur favori.</p>
+                <p>Vous pouvez bien sûr organiser vos BiblioTex comme vous le souhaitez en modifiant directement l'ordre des exercices, les projeter au tableau durant vos cours, les associer à vos parcours, les distribuer à vos groupes et les imprimer au format pdf.</p>
+                <img src="{% static 'img/bibliotex_template.jpg' %}" width="700px" />
+            </div> 
+        </div>
+    </div> 
+</div>
+
+
+
+<div class="modal fade" id="correction_modal" tabindex="-1" role="dialog" aria-labelledby="correction_modal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class='thin'>Interface de correction </h2>
+            </div>
+            <div class="modal-body">
+                <img src="{% static 'img/correction_interface.jpg' %}" width="700px" />
+            </div>
+            <div class="modal-footer">    
+                <div class="col-lg-6 col-xs-6">   
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button> 
+                </div>             
+            </div> 
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
