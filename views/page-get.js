@@ -7,6 +7,11 @@ const { promisify } = require('util')
 const readFileAsync = promisify(readFile)
 const { join } = require ('path')
 
+const { JSDOM } = require("jsdom");
+const { window } = new JSDOM();
+
+
+
 const READ_OPTIONS = { encoding : 'utf8' }
 const HTML_URL = "d:/uwamp/www/sacado-node/templates"
 
@@ -23,10 +28,16 @@ module.exports = async nomPage => {
         lireFichierHTML(`${nomPage}.head.html`),  
         lireFichierHTML(`${nomPage}.body.html`) 
     ])
-    
-    const indexHTML = modeleHTML
-    .replace('{{TITLE}}',titleHTML)
-    .replace('{{BODY}}',bodyHTML)
+
+    // var start = window.performance.now();
+    // var end = window.performance.now();
+    // console.log(`Execution time: ${end - start} ms`);
+
+
+        const indexHTML = modeleHTML
+        .replaceAll('{{TITLE}}',titleHTML)
+        .replace('{{BODY}}',bodyHTML)
+
 
     // retourner la page HTML
     return indexHTML
