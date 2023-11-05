@@ -20,16 +20,21 @@ const NOM_PAGES = {
     'demo' : 'demo',  
 } 
  // Fonction qui renvoie les HTML des routes
-app.get(/^\/(|demo)$/,  async(req, res)  =>  {
+app.get(/^\/(|demo)$/,  async(req, res)  =>  {   // '' ou 'demo'
+  console.log(`appel de la page ${req.params[0]}`)
   const nomPage = NOM_PAGES[req.params[0]] || 'index'
   const pageHTML = await genererModele(nomPage)
   res.send(pageHTML)
 });
  
-
+app.get(/.*/,  async(req,res) => {
+  console.log('Page non trouvée');
+  res.send("erreur 404")
+});
+ 
 // Ecoute tous les requetes du répertoire /style/xxx et associ les répertoires donnés
-const STATIC_IMG = 'd:/uwamp/www/sacado-node/static/img'
-const STATIC_STYLES = 'd:/uwamp/www/sacado-node/static/styles'
+const STATIC_IMG = `${process.env.ROOT}static/img`
+const STATIC_STYLES = `${process.env.ROOT}static/styles`
 // Retourne les images statiques
 app.use('/img',express.static(STATIC_IMG))
 // Retourne les styles
