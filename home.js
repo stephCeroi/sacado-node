@@ -20,10 +20,29 @@ app.use(urls.js)
 
 // Retourne les images statiques et les styles
 // Ecoute tous les requetes du répertoire /style/xxx et associ les répertoires donnés
-const STATIC_IMG = 'd:/uwamp/www/sacado-node/static/img'
-const STATIC_STYLES = 'd:/uwamp/www/sacado-node/static/styles'
-app.use('/img',express.static(STATIC_IMG))
-app.use('/styles',express.static(STATIC_STYLES)) 
+const STATIC_IMG = `${process.env.ROOT}static/img`
+const STATIC_STYLES = `${process.env.ROOT}static/styles`
+
+
+
+// Liste des routes 
+const NOM_PAGES = {
+    'demo' : 'demo',  
+} 
+ // Fonction qui renvoie les HTML des routes
+app.get(/^\/(|demo)$/,  async(req, res)  =>  {   // '' ou 'demo'
+  console.log(`appel de la page ${req.params[0]}`)
+  const nomPage = NOM_PAGES[req.params[0]] || 'index'
+  const pageHTML = await genererModele(nomPage)
+  res.send(pageHTML)
+});
+ 
+app.get(/.*/,  async(req,res) => {
+  console.log('Page non trouvée');
+  res.send("erreur 404")
+});
+
+
 
 // On écoute le port 3000
 app.listen(PORT,  () => {
