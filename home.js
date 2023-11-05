@@ -4,7 +4,7 @@
 // importe le paquet dotenv pour lier le fichier caché .env
 require('dotenv').config();
 
-// déclaration de constante
+// déclaration du port
 const PORT = process.env.PORT || 4000  
 
 // importe le paquet Express
@@ -12,27 +12,17 @@ var express = require('express');
 var app = express();
 app.use(express.json())
 
+// Inclus le fichiers de routage global
+app.use(urls.js)
 
-const genererModele = require('./views/page-get.js')
 
-// Liste des routes 
-const NOM_PAGES = {
-    'demo' : 'demo',  
-} 
- // Fonction qui renvoie les HTML des routes
-app.get(/^\/(|demo)$/,  async(req, res)  =>  {
-  const nomPage = NOM_PAGES[req.params[0]] || 'index'
-  const pageHTML = await genererModele(nomPage)
-  res.send(pageHTML)
-});
- 
 
+
+// Retourne les images statiques et les styles
 // Ecoute tous les requetes du répertoire /style/xxx et associ les répertoires donnés
 const STATIC_IMG = 'd:/uwamp/www/sacado-node/static/img'
 const STATIC_STYLES = 'd:/uwamp/www/sacado-node/static/styles'
-// Retourne les images statiques
 app.use('/img',express.static(STATIC_IMG))
-// Retourne les styles
 app.use('/styles',express.static(STATIC_STYLES)) 
 
 // On écoute le port 3000
