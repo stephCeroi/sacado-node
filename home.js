@@ -5,17 +5,14 @@
 require('dotenv').config();
 
 // déclaration du port
-const PORT = process.env.PORT || 4000  
-
+const PORT = process.env.PORT || 3000  
+const bodyParser = require('body-parser')
 // importe le paquet Express
 var express = require('express');
+
 var app = express();
 app.use(express.json())
-
-// Inclus le fichiers de routage global
-app.use(urls.js)
-
-
+ 
 
 
 // Retourne les images statiques et les styles
@@ -24,7 +21,7 @@ const STATIC_IMG = `${process.env.ROOT}static/img`
 const STATIC_STYLES = `${process.env.ROOT}static/styles`
 
 
-
+const genererModele = require('./views/page-get.js')
 // Liste des routes 
 const NOM_PAGES = {
     'demo' : 'demo',  
@@ -37,10 +34,10 @@ app.get(/^\/(|demo)$/,  async(req, res)  =>  {   // '' ou 'demo'
   res.send(pageHTML)
 });
  
-app.get(/.*/,  async(req,res) => {
-  console.log('Page non trouvée');
-  res.send("erreur 404")
-});
+// app.get(/.*/,  async(req,res) => {
+//   console.log('Page non trouvée');
+//   res.send("erreur 404")
+// });
 
 
 
