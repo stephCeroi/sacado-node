@@ -1,23 +1,24 @@
-import { Sequelize, DataTypes } from 'sequelize';
+import { Sequelize, DataTypes } from 'sequelize'
 
-const sequelize = new Sequelize('postgres');
+const sequelize  = new Sequelize('postgres') 
+
 
 module.exports = (sequelize, Sequelize) => {
     const Matiere = sequelize.define('Matiere', {
         id        : {type: Sequelize.INTEGER,autoIncrement: true,primaryKey: true },
         name      : {type: Sequelize.STRING, allowNull : false },    
-        color     : Sequelize.STRING,    
+        color     : {type: Sequelize.STRING, defaultValue: "#5d4391" },  
         shortname : Sequelize.STRING,    
-        is_active : Sequelize.BOOLEAN,    
+        is_active : {type: Sequelize.BOOLEAN,defaultValue: 1 },      
     });
     return Matiere;
-}
+} 
 
 
 module.exports = (sequelize, Sequelize) => {
     const Theme = sequelize.define('Theme', {
-        id: {type: Sequelize.INTEGER,autoIncrement: true,primaryKey: true},
-        name    : Sequelize.STRING,             
+        id   : {type: Sequelize.INTEGER, autoIncrement: true,primaryKey: true},
+        name : Sequelize.STRING,             
     });
     return Theme;
 }
@@ -28,11 +29,10 @@ Theme.belongsTo(Matiere);
 
 module.exports = (sequelize, Sequelize) => {
     const Niveau = sequelize.define('Niveau', {
-        id        : { type: Sequelize.INTEGER,autoIncrement: true,       primaryKey: true },
+        id        : { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true },
         name      : Sequelize.STRING,
         shortname : Sequelize.STRING,
         cycle     : Sequelize.STRING,
-        image     : Sequelize.STRING,
         ranking   : Sequelize.STRING,
         is_active : Sequelize.BOOLEAN,    
     });
@@ -49,7 +49,6 @@ module.exports = (sequelize, Sequelize) => {
         id   : { type: Sequelize.INTEGER,  autoIncrement: true, primaryKey: true },   
         name : Sequelize.STRING,
     });
-
     return Attendu;
 }
 
@@ -73,3 +72,13 @@ SavoirFaire.BelongsTo(Attendu);
 
  
 
+module.exports = (sequelize, Sequelize) => {
+    const Competence = sequelize.define('Competence', {
+        id   : { type: Sequelize.INTEGER,  autoIncrement: true, primaryKey: true },   
+        name : Sequelize.STRING,   
+    });
+    return SavoirFaire;
+}
+
+Matiere.hasMany(Competence); 
+Competence.BelongsTo(Matiere); 

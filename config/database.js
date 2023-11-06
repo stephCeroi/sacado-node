@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize('sacado', 'root', 'root', {host: 'localhost',dialect: 'postgres'});
+const sequelize = new Sequelize('sacado', 'postgres', 'root', {host: 'localhost',dialect: 'postgres'});
 
 try {
   sequelize.authenticate()

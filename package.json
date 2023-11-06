@@ -2,10 +2,10 @@
   "name": "sacado-node",
   "version": "1.0.0",
   "description": "Plateforme SacAdo version node",
-  "main": "home.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node home.js",
-    "watch": "nodemon home.js",
+    "start": "node server.js",
+    "watch": "nodemon server.js",
     "client": "cd client && npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
