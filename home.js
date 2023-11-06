@@ -12,8 +12,8 @@ var express = require('express');
 
 var app = express();
 app.use(express.json())
- 
-
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
 
 // Retourne les images statiques et les styles
 // Ecoute tous les requetes du répertoire /style/xxx et associ les répertoires donnés
@@ -21,14 +21,13 @@ const STATIC_IMG = `${process.env.ROOT}static/img`
 const STATIC_STYLES = `${process.env.ROOT}static/styles`
 
 
-const genererModele = require('./views/page-get.js')
+const genererModele = require('./config/page-get.js')
 // Liste des routes 
 const NOM_PAGES = {
     'demo' : 'demo',  
 } 
  // Fonction qui renvoie les HTML des routes
 app.get(/^\/(|demo)$/,  async(req, res)  =>  {   // '' ou 'demo'
-  console.log(`appel de la page ${req.params[0]}`)
   const nomPage = NOM_PAGES[req.params[0]] || 'index'
   const pageHTML = await genererModele(nomPage)
   res.send(pageHTML)

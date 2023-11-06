@@ -3,7 +3,7 @@
 
 // importe le paquet dotenv pour lier le fichier caché .env
 
-const genererModele = require('./anonymous/page-get.js')
+const genererModele = require('../anonymous/page-get.js')
 
 /* // Liste des routes 
 const NOM_PAGES = {
