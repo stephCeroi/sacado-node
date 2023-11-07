@@ -13,7 +13,7 @@ var app = express();
 app.use(express.json())
 
 
-const genererModele = require('./views/page-get.js')
+const genererModele = require('../config/page-get.js')
 
 // Liste des routes 
 const NOM_PAGES = {

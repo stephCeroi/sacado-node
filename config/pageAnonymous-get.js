@@ -12,9 +12,9 @@ const { window } = new JSDOM();
 
 
 const READ_OPTIONS = { encoding : 'utf8' };
-const HTML_URL = `${process.env.ROOT}templates`;
+const HTML_URL = `${process.env.ROOT}`;
 
-const lireFichierHTML = file => {console.log(`Lecture de ${HTML_URL}/${file}`); return readFileAsync(join(HTML_URL,file), READ_OPTIONS)}
+const lireFichierHTML = file => { return readFileAsync(join(HTML_URL,file), READ_OPTIONS)}
  
 module.exports = async nomPage => {
     // récuperer les contenus du tableau HTML et des éléments de la pages.
@@ -23,9 +23,9 @@ module.exports = async nomPage => {
         titleHTML,
         bodyHTML, 
     ] = await Promise.all([
-        lireFichierHTML('modele.html'),
-        lireFichierHTML(`${nomPage}.head.html`),  
-        lireFichierHTML(`${nomPage}.body.html`) 
+        lireFichierHTML('anonymous/templates/index.html'),
+        lireFichierHTML(`anonymous/templates/${nomPage}.head.html`),  
+        lireFichierHTML(`anonymous/templates/${nomPage}.body.html`) 
     ]);
 
     // var start = window.performance.now();
@@ -33,9 +33,9 @@ module.exports = async nomPage => {
     // console.log(`Execution time: ${end - start} ms`);
 
 
-        const indexHTML = modeleHTML
-        .replaceAll('{{TITLE}}',titleHTML)
-        .replace('{{BODY}}',bodyHTML);
+    const indexHTML = modeleHTML
+    .replaceAll('{{TITLE}}',titleHTML)
+    .replace('{{BODY}}',bodyHTML);
 
 
     // retourner la page HTML
