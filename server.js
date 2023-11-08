@@ -10,6 +10,7 @@ const bodyParser = require('body-parser')
 // importe le paquet Express
 var express = require('express');
 
+
 var app = express();
 app.use(express.json())
 // parse requests of content-type - application/x-www-form-urlencoded
@@ -19,6 +20,9 @@ app.use(express.urlencoded({ extended: true }));
 // Ecoute tous les requetes du répertoire /style/xxx et associ les répertoires donnés
 const STATIC_IMG = `${process.env.ROOT}static/img`
 const STATIC_STYLES = `${process.env.ROOT}static/styles`
+const BOOTSTRAP_JS = `${process.env.ROOT}node_modules/bootstrap/dist/js`
+const BOOTSTRAP_CSS = `${process.env.ROOT}node_modules/bootstrap/dist/css`
+const BOOTSTRAP_QUERY = `${process.env.ROOT}node_modules/jquery/dist`
 
 const genererPageAnonymous = require('./config/pageAnonymous-get.js')
 // Liste des routes 
@@ -41,6 +45,9 @@ app.get(/^\/(|about|exercises)$/,  async(req, res)  =>  {
 //retourne les fichiers static 
 app.use('/img',express.static(STATIC_IMG))
 app.use('/styles',express.static(STATIC_STYLES))
+app.use('/bootstrap_js',express.static(BOOTSTRAP_JS))
+app.use('/bootstrap_css',express.static(BOOTSTRAP_CSS))
+app.use('/bootstrap_query',express.static(BOOTSTRAP_QUERY))
 
 
 

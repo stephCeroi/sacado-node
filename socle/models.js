@@ -1,84 +1,104 @@
-import { Sequelize, DataTypes } from 'sequelize'
+'use strict'
+/* eslint-env node, es6 */
 
-const sequelize  = new Sequelize('postgres') 
-
-
-module.exports = (sequelize, Sequelize) => {
-    const Matiere = sequelize.define('Matiere', {
-        id        : {type: Sequelize.INTEGER,autoIncrement: true,primaryKey: true },
-        name      : {type: Sequelize.STRING, allowNull : false },    
-        color     : {type: Sequelize.STRING, defaultValue: "#5d4391" },  
-        shortname : Sequelize.STRING,    
-        is_active : {type: Sequelize.BOOLEAN,defaultValue: 1 },      
-    });
-    return Matiere;
-} 
+//Connexion à la base et utilisation de Sequelize pour la creation des modèles
+const sequelize  = require('../config/database');
+const { Sequelize, Op, Model, DataTypes } = require("sequelize")
+/* =========================================================================*/
 
 
-module.exports = (sequelize, Sequelize) => {
-    const Theme = sequelize.define('Theme', {
-        id   : {type: Sequelize.INTEGER, autoIncrement: true,primaryKey: true},
-        name : Sequelize.STRING,             
-    });
-    return Theme;
-}
+const Matiere = sequelize.define('Matiere', {
+    title      : {type: Sequelize.STRING, allowNull : false },    
+    color      : {type: Sequelize.STRING, defaultValue: "#5d4391" },  
+    shorttitle : {type: Sequelize.STRING},
+    is_active  : {type: Sequelize.BOOLEAN,defaultValue: 1 }
+    },  
+    {
+        // freeze name table not using *s on name
+        freezeTableName: true,
+        // dont use createdAt/update
+        timestamps: false,
+    }   
+);
+ 
+const Theme = sequelize.define('Theme', {
+        title : Sequelize.STRING
+        },  
+        {
+            // freeze name table not using *s on name
+            freezeTableName: true,
+            // dont use createdAt/update
+            timestamps: false,
+        }                
+);
 
-Matiere.hasMany(Theme); // On rajoute la colonne MatiereId dans la table Theme.
+Matiere.hasMany(Theme); // On rajoute la colonne matiereId dans la table Theme.
 Theme.belongsTo(Matiere);
-
-
-module.exports = (sequelize, Sequelize) => {
-    const Niveau = sequelize.define('Niveau', {
-        id        : { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true },
-        name      : Sequelize.STRING,
-        shortname : Sequelize.STRING,
+const Niveau = sequelize.define('Niveau', {
+        title     : Sequelize.STRING,
+        shorttitle: Sequelize.STRING,
         cycle     : Sequelize.STRING,
         ranking   : Sequelize.STRING,
-        is_active : Sequelize.BOOLEAN,    
-    });
-    return Niveau;
-}
+        is_active : Sequelize.BOOLEAN 
+        },  
+        {
+            // freeze name table not using *s on name
+            freezeTableName: true,
+            // dont use createdAt/update
+            timestamps: false,
+        }      
+   );
+
 
 Niveau.hasMany(Theme); // On rajoute la colonne NiveauId dans la table Theme.
-Theme.belongsToMany(Niveau);
+Theme.belongsTo(Niveau);
 
-
-
-module.exports = (sequelize, Sequelize) => {
-    const Attendu = sequelize.define('Attendu', {
-        id   : { type: Sequelize.INTEGER,  autoIncrement: true, primaryKey: true },   
-        name : Sequelize.STRING,
+const Attendu = sequelize.define('Attendu', {
+        title : Sequelize.STRING,
+    },  
+    {
+        // freeze name table not using *s on name
+        freezeTableName: true,
+        // dont use createdAt/update
+        timestamps: false,
     });
     return Attendu;
-}
 
 Theme.hasMany(Attendu); // On rajoute la colonne theme_id dans la table Attendu.
-Attendu.belongsToMany(Theme);
+Attendu.belongsTo(Theme);
 
 Niveau.hasMany(Attendu); // On rajoute la colonne level_id dans la table Attendu.
-Attendu.belongsToMany(Niveau);
+Attendu.belongsTo(Niveau);
 
-
-module.exports = (sequelize, Sequelize) => {
-    const SavoirFaire = sequelize.define('SavoirFaire', {
-        id   : { type: Sequelize.INTEGER,  autoIncrement: true, primaryKey: true },   
-        name : Sequelize.STRING,   
+const SavoirFaire = sequelize.define('SavoirFaire', {
+        title : Sequelize.STRING,   
+    },  
+    {
+        // freeze name table not using *s on name
+        freezeTableName: true,
+        // dont use createdAt/update
+        timestamps: false,
     });
     return SavoirFaire;
-}
+
 
 Attendu.hasMany(SavoirFaire); 
 SavoirFaire.BelongsTo(Attendu); 
 
  
-
-module.exports = (sequelize, Sequelize) => {
-    const Competence = sequelize.define('Competence', {
-        id   : { type: Sequelize.INTEGER,  autoIncrement: true, primaryKey: true },   
-        name : Sequelize.STRING,   
+const Competence = sequelize.define('Competence', {
+        title : Sequelize.STRING,   
+    },  
+    {
+        // freeze name table not using *s on name
+        freezeTableName: true,
+        // dont use createdAt/update
+        timestamps: false,
     });
-    return SavoirFaire;
-}
 
 Matiere.hasMany(Competence); 
 Competence.BelongsTo(Matiere); 
+
+
+module.exports = { Matiere , Niveau, Competence, Theme, Attendu, SavoirFaire };
+

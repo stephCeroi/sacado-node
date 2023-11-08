@@ -17,8 +17,5 @@ app.get(/^\/(|demo)$/,  async(req, res)  =>  {
 }); */
  
 
-
-app.get('/account', account.url)
-
-
-
+const matiereRoute = require("./routes/matiereRoutes");
+app.use("/matiere", matiereRoute);
